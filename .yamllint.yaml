@@ -1,0 +1,15 @@
+---
+extends: default
+
+rules:
+  truthy:
+    allowed-values: ["yes", "no", "True", "false", "False", "true"]
+  line-length:
+    max: 200
+    level: warning
+  indentation: disable
+  braces: disable
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1

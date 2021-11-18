@@ -1,0 +1,96 @@
+---
+- name: Check if teleport is installed.
+  stat: "path=/usr/local/bin/teleport"
+  register: teleport_bin
+
+- name: Get installed teleport version
+  shell: |
+    teleport version
+  args:
+    removes: "{{ teleport_config_path }}"
+  register: "teleport_installed_version"
+  when: teleport_bin.stat.exists
+
+- name: Set teleport_update
+  set_fact:
+    update_teleport: "{{ teleport_version not in teleport_installed_version.stdout }}"
+  when: teleport_bin.stat.exists
+  changed_when: update_teleport
+  notify: Reload_Teleport
+
+- name: Get auth_token # noqa risky-shell-pipe
+  become: yes
+  shell: |
+    grep -i "auth_token:" {{ teleport_config_path }} | cut -d ':' -f 2 | tr -d ' "'
+  args:
+    removes: "{{ teleport_config_path }}"
+  register: "auth_token"
+  when: teleport_bin.stat.exists
+
+- name: Set teleport_auth_token # noqa no-handler
+  set_fact:
+    teleport_auth_token: "{{ auth_token.stdout }}"
+  when: auth_token.changed
+
+- name: Get ca_pin # noqa risky-shell-pipe
+  become: yes
+  shell: |
+    grep -i "ca_pin" {{ teleport_config_path }} | cut -d ':' -f 2,3 | tr -d ' "'
+  args:
+    removes: "{{ teleport_config_path }}"
+  register: "ca_pin"
+  when: teleport_bin.stat.exists
+
+- name: Set teleport_ca_pin # noqa no-handler
+  set_fact:
+    teleport_ca_pin: "{{ ca_pin.stdout }}"
+  when: ca_pin.changed
+
+- name: Unarchive teleport
+  unarchive:
+    src: "{{ teleport_url }}"
+    dest: "/tmp"
+    remote_src: yes
+  when: not teleport_bin.stat.exists or update_teleport
+
+- name: Install teleport
+  become: yes
+  command: >
+    ./install
+    chdir=/tmp/teleport
+  notify: Reload_Teleport
+  when: not teleport_bin.stat.exists or update_teleport
+
+- name: Create teleport config
+  become: yes
+  template:
+    src: "teleport.yaml.j2"
+    dest: "{{ teleport_config_path }}"
+    owner: "root"
+    group: "root"
+    mode: 0600
+    backup: "{{ backup_teleport_config }}"
+  register: teleport_template
+  notify:
+    - Reload_Teleport
+    - Create Teleport Backup Directory
+    - Copy Teleport Backup File
+    - Delete Original Teleport Backup File
+
+- name: Create teleport service
+  become: yes
+  template:
+    src: "teleport.service.j2"
+    dest: "{{ services_path }}/teleport.service"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: Reload_Teleport
+
+- name: Ensure teleport started and enabled on boot.
+  become: yes
+  systemd:
+    name: "teleport"
+    state: "started"
+    daemon_reload: yes
+    enabled: yes
