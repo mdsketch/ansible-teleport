@@ -82,7 +82,7 @@ This role reloads `teleport.service` after any of the following occur:
 None
 
 ## Example Playbook
-
+For example to install teleport on a raspberry pi:
 ```
 - hosts: all
   roles:
@@ -118,6 +118,8 @@ teleport_auth_token: 1234
 teleport_ca_pin: 1234
 teleport_auth_servers: 
     - "https://auth.example.com:443"
+teleport_version: "7.3.3"
+teleport_architecture: "arm-bin"
 ```
 
 ## License
