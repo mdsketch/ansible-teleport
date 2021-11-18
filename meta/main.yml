@@ -1,0 +1,27 @@
+galaxy_info:
+  author: mdsketch
+  role_name: teleport
+  description: An ansible role to install or update the teleport node service and teleport config on Debian based systems.
+
+  license: MIT
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - system
+    - teleport
+    - ssh
+    - cluster
+    - ubuntu
+    - arm
+    - raspberry
+    - pi
+dependencies: []
