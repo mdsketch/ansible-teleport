@@ -77,7 +77,7 @@
   become: yes
   template:
     src: "{{ teleport_service_template }}"
-    dest: "{{ services_path }}/teleport.service"
+    dest: "/etc/systemd/system/teleport.service"
     owner: "root"
     group: "root"
     mode: 0644
