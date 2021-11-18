@@ -73,9 +73,6 @@
   register: teleport_template
   notify:
     - Reload_Teleport
-    - Create Teleport Backup Directory
-    - Copy Teleport Backup File
-    - Delete Original Teleport Backup File
 
 - name: Create teleport service
   become: yes

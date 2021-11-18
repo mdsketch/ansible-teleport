@@ -7,30 +7,3 @@
     daemon_reload: yes
     enabled: yes
   when: teleport_control_systemd
-
-- name: Create Teleport Backup Directory
-  file:
-    path: "{{ safe_backups_dir }}/teleport"
-    state: directory
-    mode: 0777
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  when: teleport_template.backup_file is defined
-
-- name: Copy Teleport Backup File
-  become: yes
-  copy:
-    src: "{{ teleport_template.backup_file }}"
-    dest: "{{ safe_backups_dir }}/teleport/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0400
-    remote_src: True
-  when: teleport_template.backup_file is defined
-
-- name: Delete Original Teleport Backup File
-  become: yes
-  file:
-    path: "{{ teleport_template.backup_file }}"
-    state: absent
-  when: teleport_template.backup_file is defined
