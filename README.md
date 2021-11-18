@@ -17,21 +17,6 @@ A running teleport cluster so that you can provide the following information:
 These are the default variables with their default values as defined in `defaults/main.yml`
 
 ```
-teleport_version: "7.3.3"
-teleport_architecture: "arm-bin"
-teleport_auth_token: ""
-teleport_ca_pin: ""
-teleport_auth_servers:
-    - "https://auth.example.com"
-    - "127.0.0.1:3025"
-teleport_url: "https://get.gravitational.com/teleport-v{{ teleport_version }}-linux-{{ teleport_architecture }}.tar.gz"
-teleport_config_path: "/etc/teleport.yaml"
-backup_teleport_config: yes
-teleport_config_template: "default_teleport.yaml.j2"
-teleport_service_template: "default_teleport.service.j2"
-```
-
-```
 teleport_version
 ```
 The version of teleport to install. See [teleport downloads](https://goteleport.com/teleport/download/) for available versions.
