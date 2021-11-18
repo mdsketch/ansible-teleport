@@ -66,6 +66,11 @@ backup_teleport_config
 ```
 Runs a backup of the teleport configuration file before overwriting it. The default is `yes`. See [Upgrading Teleport](#upgrading-teleport) for more information.
 
+```
+teleport_control_systemd
+```
+Default `yes`. Controls if this role modifies the teleport service.
+
 ## Upgrading Teleport
 
 When the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.

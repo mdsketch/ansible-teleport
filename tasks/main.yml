@@ -80,12 +80,13 @@
 - name: Create teleport service
   become: yes
   template:
-    src: "teleport.service.j2"
+    src: "{{ teleport_service_template }}"
     dest: "{{ services_path }}/teleport.service"
     owner: "root"
     group: "root"
     mode: 0644
   notify: Reload_Teleport
+  when: teleport_control_systemd
 
 - name: Ensure teleport started and enabled on boot.
   become: yes
@@ -94,3 +95,4 @@
     state: "started"
     daemon_reload: yes
     enabled: yes
+  when: teleport_control_systemd

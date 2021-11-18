@@ -6,6 +6,7 @@
     state: "reloaded"
     daemon_reload: yes
     enabled: yes
+  when: teleport_control_systemd
 
 - name: Create Teleport Backup Directory
   file:
