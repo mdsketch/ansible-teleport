@@ -6,7 +6,7 @@ Works with any architecture that teleport has a binary for, see available [telep
 
 ## Requirements
 
-You will a running teleport cluster so that you can provide the following information:
+A running teleport cluster so that you can provide the following information:
 
 - auth token (dynamic or static)
 - CA pin (optional)
