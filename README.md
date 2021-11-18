@@ -9,7 +9,7 @@ Works with any architecture that teleport has a binary for, see available [telep
 A running teleport cluster so that you can provide the following information:
 
 - auth token (dynamic or static)
-- CA pin (optional)
+- CA pin
 - address of the authentication server
 
 ## Role Variables
