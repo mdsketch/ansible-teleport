@@ -29,6 +29,7 @@
   when: teleport_template.backup_file is defined
 
 - name: Delete Original Teleport Backup File
+  become: yes
   file:
     path: "{{ teleport_template.backup_file }}"
     state: absent
