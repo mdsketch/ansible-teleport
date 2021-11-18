@@ -7,6 +7,8 @@ An ansible role to install or update the teleport node service and teleport conf
 
 Works with any architecture that teleport has a binary for, see available [teleport downloads](https://goteleport.com/teleport/download/).
 
+If you add your own teleport config file template you can run any node services you want (ssh, app, database, kubernetes)
+
 ## Requirements
 
 A running teleport cluster so that you can provide the following information:
