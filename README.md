@@ -73,6 +73,11 @@ teleport_control_systemd
 ```
 Default `yes`. Controls if this role modifies the teleport service.
 
+```
+teleport_template_config
+```
+Default `yes`. Controls if this role modifies the teleport config file.
+
 ## Upgrading Teleport
 
 When the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.

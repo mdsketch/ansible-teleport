@@ -70,6 +70,7 @@
     group: "root"
     mode: 0600
     backup: "{{ backup_teleport_config }}"
+  when: teleport_template_config
   notify:
     - Reload_Teleport
 
