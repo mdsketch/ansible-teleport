@@ -64,7 +64,7 @@
 - name: Create teleport config
   become: yes
   template:
-    src: "teleport.yaml.j2"
+    src: "{{ teleport_config_template }}"
     dest: "{{ teleport_config_path }}"
     owner: "root"
     group: "root"
