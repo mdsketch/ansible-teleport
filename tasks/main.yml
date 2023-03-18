@@ -88,6 +88,15 @@
   notify:
     - Reload_Teleport
 
+- name: Ensure systemd directory exists
+  become: yes
+  ansible.builtin.file:
+    dest: "/etc/systemd/system"
+    owner: "root"
+    group: "root"
+    mode: 0755
+    state: directory
+
 - name: Create teleport service
   become: yes
   ansible.builtin.template:
