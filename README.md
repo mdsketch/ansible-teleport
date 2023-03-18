@@ -82,7 +82,7 @@ Default `yes`. Controls if this role modifies the teleport config file.
 
 When the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
 
-When preforming an upgrade, a backup of the current configuration file in `teleport_config_path` will be created and a new configuration file templated in its place. When doing this a `teleport_auth_token` and `teleport_ca_pin` do not need to be provided, as they are pulled from the existing configuration file, and then templated into the new configuration file.
+When performing an upgrade, a backup of the current configuration file in `teleport_config_path` will be created and a new configuration file templated in its place. When doing this a `teleport_auth_token` and `teleport_ca_pin` do not need to be provided, as they are pulled from the existing configuration file, and then templated into the new configuration file.
 
 This allows you to update values in the configuration file like labels and commands without having to store the auth token and ca pin.
 
