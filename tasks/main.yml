@@ -1,4 +1,13 @@
 ---
+
+- name: Set fact is_container
+  ansible.builtin.set_fact:
+    is_container: true
+  when: >
+    (ansible_virtualization_type is defined and
+      (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+    )
+
 - name: Check if teleport is installed.
   ansible.builtin.stat:
     path: /usr/local/bin/teleport
@@ -94,4 +103,6 @@
     state: "started"
     daemon_reload: yes
     enabled: yes
-  when: teleport_control_systemd
+  when:
+    - teleport_control_systemd
+    - not is_container | bool
