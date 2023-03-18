@@ -19,6 +19,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "teleport_installed_version"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_update
@@ -35,6 +36,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "auth_token"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_auth_token # noqa no-handler
@@ -49,6 +51,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "ca_pin"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_ca_pin # noqa no-handler
