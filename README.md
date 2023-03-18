@@ -131,7 +131,7 @@ auth_service:
 ```
 teleport_auth_token: 1234
 teleport_ca_pin: 1234
-teleport_auth_servers: 
+teleport_auth_servers:
     - "https://auth.example.com:443"
 teleport_version: "7.3.3"
 teleport_architecture: "arm-bin"
