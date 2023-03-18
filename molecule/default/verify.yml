@@ -52,7 +52,12 @@
           - systemd.stat.mode == '0644'
           - systemd.stat.pw_name == 'root'
 
-    - name: Ensure pgrep is present
+    - name: Debian | Ensure pgrep is present
+      ansible.builtin.package:
+        name: procps
+        state: present
+      when: ansible_os_family == "Debian"
+    - name: RedHat | Ensure pgrep is present
       ansible.builtin.package:
         name: procps-ng
         state: present
