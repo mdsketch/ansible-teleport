@@ -1,0 +1,87 @@
+---
+
+- name: Verify
+  hosts: teleportclients
+  vars:
+    config: /etc/teleport.yaml
+    ports:
+      - { h: 0.0.0.0, p: 3022 }
+    is_container: false
+  pre_tasks:
+    - name: Debug | var ansible_virtualization_type
+      ansible.builtin.debug:
+        var: ansible_virtualization_type
+    - name: Set fact is_container
+      ansible.builtin.set_fact:
+        is_container: true
+      when: >
+        (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+        )
+  tasks:
+    - name: Get teleport config file stats
+      ansible.builtin.stat:
+        path: /etc/teleport.yaml
+      register: cfg
+    - name: Ensure teleport config is present
+      ansible.builtin.assert:
+        that: >
+          cfg.stat.exists
+
+    - name: Ensure /usr/local/bin/teleport file is present
+      ansible.builtin.stat:
+        path: /usr/local/bin/teleport
+      register: bin
+    - name: Validate bin present
+      ansible.builtin.assert:
+        that:
+          - bin.stat.exists
+          - bin.stat.size != 0
+          - bin.stat.mode == '0755'
+          - bin.stat.pw_name == 'root'
+
+    - name: Ensure /etc/systemd/system/teleport.service file is present
+      ansible.builtin.stat:
+        path: /etc/systemd/system/teleport.service
+      register: systemd
+    - name: Validate systemd file present
+      ansible.builtin.assert:
+        that:
+          - systemd.stat.exists
+          - systemd.stat.size != 0
+          - systemd.stat.mode == '0644'
+          - systemd.stat.pw_name == 'root'
+
+    - name: Ensure pgrep is present
+      ansible.builtin.package:
+        name: procps-ng
+        state: present
+      when: ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 8
+    - name: Ensure process is running
+      ansible.builtin.command: pgrep -u root teleport
+      register: ps
+      changed_when: false
+      ignore_errors: true
+    - name: Validate ps output
+      ansible.builtin.assert:
+        that: ps.stdout
+      when:
+        - not is_container|bool
+
+    - name: Check all processes
+      ansible.builtin.command: ps aux
+      changed_when: false
+      register: psa
+    - name: Debug | ps aux output
+      ansible.builtin.debug:
+        var: psa
+        verbosity: 1
+
+    - name: Ensure ports are listening
+      ansible.builtin.wait_for:
+        host: "{{ item.h }}"
+        port: "{{ item.p }}"
+        timeout: 10
+      with_items: "{{ ports }}"
+      when:
+        - not is_container|bool
