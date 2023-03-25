@@ -13,7 +13,7 @@ If you add your own teleport config file template you can run any node services 
 
 A running teleport cluster so that you can provide the following information:
 
-- auth token (dynamic or static)
+- auth token (dynamic or static). Ex: `tctl nodes add --ttl=5m --roles=node | grep "invite token:" | grep -Eo "[0-9a-z]{32}"`
 - CA pin
 - address of the authentication server
 
