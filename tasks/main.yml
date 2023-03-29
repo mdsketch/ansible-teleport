@@ -1,18 +1,19 @@
 ---
 - name: Check if teleport is installed.
-  stat: "path=/usr/local/bin/teleport"
+  ansible.builtin.stat:
+    path: /usr/local/bin/teleport
   register: teleport_bin
 
 - name: Get installed teleport version
-  shell: |
-    teleport version
+  ansible.builtin.command:
+    cmd: teleport version
   args:
     removes: "{{ teleport_config_path }}"
   register: "teleport_installed_version"
   when: teleport_bin.stat.exists
 
 - name: Set teleport_update
-  set_fact:
+  ansible.builtin.set_fact:
     update_teleport: "{{ teleport_version not in teleport_installed_version.stdout }}"
   when: teleport_bin.stat.exists
   changed_when: update_teleport
@@ -20,7 +21,7 @@
 
 - name: Get auth_token # noqa risky-shell-pipe
   become: yes
-  shell: |
+  ansible.builtin.shell: |
     grep -i "auth_token:" {{ teleport_config_path }} | cut -d ':' -f 2 | tr -d ' "'
   args:
     removes: "{{ teleport_config_path }}"
@@ -28,13 +29,13 @@
   when: teleport_bin.stat.exists
 
 - name: Set teleport_auth_token # noqa no-handler
-  set_fact:
+  ansible.builtin.set_fact:
     teleport_auth_token: "{{ auth_token.stdout }}"
   when: auth_token.changed
 
 - name: Get ca_pin # noqa risky-shell-pipe
   become: yes
-  shell: |
+  ansible.builtin.shell: |
     grep -i "ca_pin" {{ teleport_config_path }} | cut -d ':' -f 2,3 | tr -d ' "'
   args:
     removes: "{{ teleport_config_path }}"
@@ -42,12 +43,12 @@
   when: teleport_bin.stat.exists
 
 - name: Set teleport_ca_pin # noqa no-handler
-  set_fact:
+  ansible.builtin.set_fact:
     teleport_ca_pin: "{{ ca_pin.stdout }}"
   when: ca_pin.changed
 
 - name: Unarchive teleport
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ teleport_url }}"
     dest: "/tmp"
     remote_src: yes
@@ -55,15 +56,16 @@
 
 - name: Install teleport
   become: yes
-  command: >
-    ./install
-    chdir=/tmp/teleport
+  ansible.builtin.command:  # noqa no-changed-when
+    cmd: ./install
+  args:
+    chdir: /tmp/teleport
   notify: Reload_Teleport
   when: not teleport_bin.stat.exists or update_teleport
 
 - name: Create teleport config
   become: yes
-  template:
+  ansible.builtin.template:
     src: "{{ teleport_config_template }}"
     dest: "{{ teleport_config_path }}"
     owner: "root"
@@ -76,7 +78,7 @@
 
 - name: Create teleport service
   become: yes
-  template:
+  ansible.builtin.template:
     src: "{{ teleport_service_template }}"
     dest: "/etc/systemd/system/teleport.service"
     owner: "root"
@@ -87,7 +89,7 @@
 
 - name: Ensure teleport started and enabled on boot.
   become: yes
-  systemd:
+  ansible.builtin.systemd:
     name: "teleport"
     state: "started"
     daemon_reload: yes

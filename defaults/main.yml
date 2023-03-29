@@ -1,6 +1,7 @@
 ---
-teleport_version: "7.3.3"
-teleport_architecture: "arm-bin"
+teleport_version: "12.1.1"
+teleport_architecture: "amd64-bin"
+# teleport_architecture: "arm-bin"
 teleport_auth_token: ""
 teleport_ca_pin: ""
 teleport_auth_servers:
