@@ -1,7 +1,7 @@
 # Ansible Role: Teleport Node Service
 
 [![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-mdsketch.teleport-blueviolet)](https://galaxy.ansible.com/mdsketch/teleport)
-[![Ansible Lint](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml)
+[![Ansible Lint](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml/badge.svg)](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml)
 
 An ansible role to install or update the teleport node service and teleport config on Debian based systems.
 
