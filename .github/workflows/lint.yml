@@ -58,5 +58,3 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE && ansible-lint
         if: ${{ always() }}
-      - name: Run ansible-lint
-        uses: ansible-community/ansible-lint-action@v6.11.0
