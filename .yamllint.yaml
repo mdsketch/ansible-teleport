@@ -2,7 +2,8 @@
 extends: default
 
 rules:
-  truthy: disable
+  truthy:
+    allowed-values: ["yes", "no", "True", "false", "False", "true"]
   line-length:
     max: 200
     level: warning
