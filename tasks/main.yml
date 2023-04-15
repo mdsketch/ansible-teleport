@@ -1,4 +1,13 @@
 ---
+
+- name: Set fact is_container
+  ansible.builtin.set_fact:
+    is_container: true
+  when: >
+    (ansible_virtualization_type is defined and
+      (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+    )
+
 - name: Check if teleport is installed.
   ansible.builtin.stat:
     path: /usr/local/bin/teleport
@@ -10,6 +19,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "teleport_installed_version"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_update
@@ -26,6 +36,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "auth_token"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_auth_token # noqa no-handler
@@ -40,6 +51,7 @@
   args:
     removes: "{{ teleport_config_path }}"
   register: "ca_pin"
+  changed_when: false
   when: teleport_bin.stat.exists
 
 - name: Set teleport_ca_pin # noqa no-handler
@@ -76,6 +88,15 @@
   notify:
     - Reload_Teleport
 
+- name: Ensure systemd directory exists
+  become: yes
+  ansible.builtin.file:
+    dest: "/etc/systemd/system"
+    owner: "root"
+    group: "root"
+    mode: 0755
+    state: directory
+
 - name: Create teleport service
   become: yes
   ansible.builtin.template:
@@ -94,4 +115,6 @@
     state: "started"
     daemon_reload: yes
     enabled: yes
-  when: teleport_control_systemd
+  when:
+    - teleport_control_systemd
+    - not is_container | bool

@@ -1,13 +1,20 @@
 # Ansible Role: Teleport Node Service
 
 [![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-mdsketch.teleport-blueviolet)](https://galaxy.ansible.com/mdsketch/teleport)
-
+[![Ansible Lint](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml/badge.svg)](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml)
+[![molecule_tests](https://github.com/mdsketch/ansible-teleport/actions/workflows/molecule.yml/badge.svg)](https://github.com/mdsketch/ansible-teleport/actions/workflows/molecule.yml)
 
 An ansible role to install or update the teleport node service and teleport config on Debian based systems.
 
 Works with any architecture that teleport has a binary for, see available [teleport downloads](https://goteleport.com/teleport/download/).
 
 If you add your own teleport config file template you can run any node services you want (ssh, app, database, kubernetes)
+
+## TODO:
+- add idempotence tests to verify teleport is updated correctly (config, service and binary)
+- add tests for variable templating
+- lock down the versions of the linting tools
+- investigate if installing teleport in a docker container is useful (currently not supported)
 
 ## Requirements
 
