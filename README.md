@@ -8,7 +8,9 @@ An ansible role to install or update the teleport node service and teleport conf
 
 Works with any architecture that teleport has a binary for, see available [teleport downloads](https://goteleport.com/teleport/download/).
 
-If you add your own teleport config file template you can run any node services you want (ssh, app, database, kubernetes)
+If you add your own teleport config file template you can run any node services you want (ssh, app, database, kubernetes).
+
+Please Check the teleport config file [documentation](https://goteleport.com/docs/reference/config/) for more information and confirm it is setup correctly.
 
 ## TODO:
 - add idempotence tests to verify teleport is updated correctly (config, service and binary)
@@ -20,7 +22,7 @@ If you add your own teleport config file template you can run any node services 
 
 A running teleport cluster so that you can provide the following information:
 
-- auth token (dynamic or static)
+- auth token (dynamic or static). Ex: `tctl nodes add --ttl=5m --roles=node | grep "invite token:" | grep -Eo "[0-9a-z]{32}"`
 - CA pin
 - address of the authentication server
 
@@ -104,44 +106,64 @@ This role reloads `teleport.service` after any of the following occur:
 None
 
 ## Example Playbook
-For example to install teleport on a raspberry pi:
+For example to install teleport on a node:
 ```
 - hosts: all
   roles:
     - mdsketch.teleport
+  vars:
+    # optional ssh labels
+    teleport_ssh_labels:
+      - k: "label_key"
+        v: "label_value"
+    teleport_auth_token: "super secret auth token"
+    teleport_ca_pin: "not as secret ca pin"
+    teleport_auth_servers:
+      - "1st auth server"
+      - "2nd auth server"
+    teleport_proxy_server:
+      - "proxy server"
 ```
 
-*Inside `templates/teleport.yaml.j2`*
+*Created Teleport Config to `/etc/teleport.yaml`*
 
 ```
+---
+version: v3
 teleport:
-  auth_token: {{ teleport_auth_token }}
-  ca_pin: {{ teleport_ca_pin }}
+  auth_token: "super secret auth token"
+  ca_pin: "not as secret ca pin"
   auth_servers:
-{% for auth_server in teleport_auth_servers %}
-    - {{ auth_server }}
-{% endfor %}
+    - "1st auth server"
+    - "2nd auth server"
+  proxy_server: ['proxy server']
+  log:
+    output: stderr
+    severity: INFO
+    format:
+      output: text
+  diag_addr: ""
 ssh_service:
   enabled: "yes"
+  labels:
+    label_key: label_value
   commands:
+  - name: hostname
+    command: [hostname]
+    period: 60m0s
   - name: uptime
     command: [uptime, -p]
     period: 5m0s
+  - name: version
+    command: [teleport, version]
+    period: 60m0s
 proxy_service:
   enabled: "no"
+  https_keypairs: []
+  https_keypairs_reload_interval: 0s
+  acme: {}
 auth_service:
   enabled: "no"
-```
-
-*Inside `templates/teleport.yaml.j2`*
-
-```
-teleport_auth_token: 1234
-teleport_ca_pin: 1234
-teleport_auth_servers:
-    - "https://auth.example.com:443"
-teleport_version: "7.3.3"
-teleport_architecture: "arm-bin"
 ```
 
 ## License
