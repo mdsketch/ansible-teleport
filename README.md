@@ -118,11 +118,8 @@ For example to install teleport on a node:
         v: "label_value"
     teleport_auth_token: "super secret auth token"
     teleport_ca_pin: "not as secret ca pin"
-    teleport_auth_servers:
-      - "1st auth server"
-      - "2nd auth server"
-    teleport_proxy_server:
-      - "proxy server"
+    teleport_auth_server: "auth server"
+    teleport_proxy_server: "proxy server"
 ```
 
 *Created Teleport Config to `/etc/teleport.yaml`*
@@ -133,10 +130,8 @@ version: v3
 teleport:
   auth_token: "super secret auth token"
   ca_pin: "not as secret ca pin"
-  auth_servers:
-    - "1st auth server"
-    - "2nd auth server"
-  proxy_server: ['proxy server']
+  auth_server: "auth server"
+  proxy_server: proxy server
   log:
     output: stderr
     severity: INFO

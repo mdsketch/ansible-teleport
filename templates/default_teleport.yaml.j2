@@ -3,10 +3,9 @@ version: v3
 teleport:
   auth_token: "{{ teleport_auth_token }}"
   ca_pin: "{{ teleport_ca_pin }}"
-  auth_servers:
-{% for auth_server in teleport_auth_servers %}
-    - "{{ auth_server }}"
-{% endfor %}
+{% if teleport_auth_server|string %}
+  auth_server: {{ teleport_auth_server }}
+{% endif %}
 {% if teleport_proxy_server|string %}
   proxy_server: {{ teleport_proxy_server }}
 {% endif %}
