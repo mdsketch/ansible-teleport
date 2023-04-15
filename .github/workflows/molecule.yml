@@ -1,5 +1,5 @@
 ---
-name: AnsibleCI
+name: molecule_tests
 
 on:
   push:
