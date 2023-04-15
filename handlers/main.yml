@@ -6,4 +6,6 @@
     state: "reloaded"
     daemon_reload: yes
     enabled: yes
-  when: teleport_control_systemd
+  when:
+    - teleport_control_systemd
+    - not is_container | bool

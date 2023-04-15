@@ -16,3 +16,5 @@ teleport_control_systemd: yes
 teleport_template_config: yes
 # Default dont change
 update_teleport: no
+
+is_container: false
