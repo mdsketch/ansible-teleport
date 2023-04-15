@@ -23,15 +23,15 @@ ssh_service:
     {{ ssh_label.k }}: {{ ssh_label.v }}
 {% endfor %}
   commands:
-  - name: hostname
-    command: [hostname]
-    period: 60m0s
-  - name: uptime
-    command: [uptime, -p]
-    period: 5m0s
-  - name: version
-    command: [teleport, version]
-    period: 60m0s
+    - name: hostname
+      command: [hostname]
+      period: 60m0s
+    - name: uptime
+      command: [uptime, -p]
+      period: 5m0s
+    - name: version
+      command: [teleport, version]
+      period: 60m0s
 proxy_service:
   enabled: "no"
   https_keypairs: []
