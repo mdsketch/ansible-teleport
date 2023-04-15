@@ -130,7 +130,7 @@ version: v3
 teleport:
   auth_token: "super secret auth token"
   ca_pin: "not as secret ca pin"
-  auth_server: "auth server"
+  auth_server: auth server
   proxy_server: proxy server
   log:
     output: stderr
