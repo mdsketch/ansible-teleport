@@ -6,7 +6,7 @@ on:
     types: [created, edited, published, released]
   push:
     tags:
-      - '*'
+      - "*"
 
 permissions: {}
 

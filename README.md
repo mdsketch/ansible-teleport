@@ -9,6 +9,12 @@ Works with any architecture that teleport has a binary for, see available [telep
 
 If you add your own teleport config file template you can run any node services you want (ssh, app, database, kubernetes)
 
+## TODO:
+- add idempotence tests to verify teleport is updated correctly (config, service and binary)
+- add tests for variable templating
+- lock down the versions of the linting tools
+- investigate if installing teleport in a docker container is useful (currently not supported)
+
 ## Requirements
 
 A running teleport cluster so that you can provide the following information:
