@@ -58,6 +58,9 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE && ansible-galaxy install --timeout 120 --verbose -r molecule/default/requirements.yml
         continue-on-error: true
+      - name: Reset Molecule Env
+        run: |
+          molecule reset
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE && molecule test
