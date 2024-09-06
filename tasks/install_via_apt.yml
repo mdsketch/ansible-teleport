@@ -1,0 +1,35 @@
+---
+- name: "Install via apt"
+  become: true
+  notify: Reload_Teleport
+  block:
+    - name: "Set the teleport_major_version and teleport_pkgs facts"
+      ansible.builtin.set_fact:
+        teleport_major_version: "{{ 'v' + teleport_version | regex_replace('[.].*$', '') }}"
+        teleport_pkgs: >-
+          {% if teleport_edition == "oss" %}teleport{%
+             elif teleport_edition == "enterprise" %}teleport-ent{%
+             else %}teleport-ent=v{{ teleport_version }} teleport-ent-updater{% endif %}
+
+    - name: "Install the pgp keys of info@gravitational.com"
+      ansible.builtin.copy:
+        src: teleport-archive-keyring.asc
+        dest: /usr/share/keyrings/teleport-archive-keyring.asc
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: "Configure the teleport sources list"
+      ansible.builtin.template:
+        src: teleport.sources.j2
+        dest: /etc/apt/sources.list.d/teleport.sources
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: "Install teleport"
+      ansible.builtin.apt:
+        name: "{{ teleport_pkgs }}"
+        state: latest # noqa: package-latest
+        force_apt_get: true
+        update_cache: true

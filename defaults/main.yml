@@ -2,16 +2,22 @@
 teleport_version: "12.1.1"
 teleport_architecture: "amd64-bin"
 # teleport_architecture: "arm-bin"
+# apt is supported.
+teleport_install_method: "apt"
+# Only used when teleport_install_method is not 'tar'
+teleport_edition: "oss"
+# Only used when teleport_install_method is not 'tar'
+teleport_cloud: false
 teleport_auth_token: ""
 teleport_ca_pin: ""
-teleport_auth_server: "https://auth.example.com"
+teleport_auth_server: ""
 teleport_url: "https://get.gravitational.com/teleport-v{{ teleport_version }}-linux-{{ teleport_architecture }}.tar.gz"
 teleport_config_path: "/etc/teleport.yaml"
 backup_teleport_config: yes
 teleport_config_template: "default_teleport.yaml.j2"
 teleport_service_template: "default_teleport.service.j2"
 teleport_ssh_labels: []
-teleport_proxy_server: ''
+teleport_proxy_server: ""
 teleport_control_systemd: yes
 teleport_template_config: yes
 # Default dont change

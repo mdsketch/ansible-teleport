@@ -4,7 +4,7 @@
 [![Ansible Lint](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml/badge.svg)](https://github.com/mdsketch/ansible-teleport/actions/workflows/lint.yml)
 [![molecule_tests](https://github.com/mdsketch/ansible-teleport/actions/workflows/molecule.yml/badge.svg)](https://github.com/mdsketch/ansible-teleport/actions/workflows/molecule.yml)
 
-An ansible role to install or update the teleport node service and teleport config on Debian based systems.
+An ansible role to install or update the teleport node service and teleport config on Linux based systems.
 
 Works with any architecture that teleport has a binary for, see available [teleport downloads](https://goteleport.com/teleport/download/).
 
@@ -15,7 +15,6 @@ Please Check the teleport config file [documentation](https://goteleport.com/doc
 ## TODO:
 - add idempotence tests to verify teleport is updated correctly (config, service and binary)
 - add tests for variable templating
-- lock down the versions of the linting tools
 - investigate if installing teleport in a docker container is useful (currently not supported)
 
 ## Requirements
@@ -24,7 +23,7 @@ A running teleport cluster so that you can provide the following information:
 
 - auth token (dynamic or static). Ex: `tctl nodes add --ttl=5m --roles=node | grep "invite token:" | grep -Eo "[0-9a-z]{32}"`
 - CA pin
-- address of the authentication server
+- address of the authentication or proxy server
 
 ## Role Variables
 
@@ -46,6 +45,21 @@ Change `teleport_architecture` any of the following:
 - `386-bin` if you are running on i386/Intel based devices.
 
 ```
+teleport_install_method: "tar"
+```
+The method used for installation, currently supported:
+- `tar` Download an archive.
+- `apt` Install gravitational keyring and the packages requested via apt.
+
+```
+teleport_edition: "oss"
+```
+This is only used with teleport_install_method: "apt":
+- "oss" if you are using the community edition.
+- "enterprise" if you are using the self-hosted edition.
+- "cloud" if you are using the cloud edition.
+
+```
 teleport_config_template
 ```
 The template to use for the teleport configuration file. The default is `templates/default_teleport.yaml.j2`. It contains a basic configuration that will enable the SSH service and add a command label showing node uptime.
@@ -53,24 +67,19 @@ The template to use for the teleport configuration file. The default is `templat
 There are many [options available](https://goteleport.com/docs/setup/reference/config/) and you can substitute in your own template and add any variables you want.
 
 ```
-teleport_service_template
-```
-The template to use for the teleport service file. The default is `templates/default_teleport.service.j2`. You can substitute in your own template and add any variables you want.
-
-```
 teleport_ca_pin
 ```
 The CA pin to use for the teleport configuration. This is optional, but [recommended](https://goteleport.com/docs/setup/admin/adding-nodes/#untrusted-auth-servers).
 
 ```
-teleport_config_path
+teleport_auth_server
 ```
-The path to the teleport configuration file. The default is `/etc/teleport.yaml`.
+The authentication server to use for the teleport configuration. Examples are shown as defaults above.
 
 ```
-teleport_auth_servers
+teleport_proxy_server
 ```
-The list of authentication servers to use for the teleport configuration. Examples are shown as defaults above.
+The proxy server to user for the teleport configuration. Examples are shown as defaults above.
 
 ```
 backup_teleport_config

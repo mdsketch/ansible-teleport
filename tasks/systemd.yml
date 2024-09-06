@@ -1,0 +1,22 @@
+---
+- name: Configure teleport with systemd
+  become: yes
+  notify: Reload_Teleport
+  block:
+  - name: Ensure systemd directory exists
+    become: yes
+    ansible.builtin.file:
+      dest: "/etc/systemd/system"
+      owner: "root"
+      group: "root"
+      mode: "0755"
+      state: directory
+
+  - name: Create teleport service
+    become: yes
+    ansible.builtin.template:
+      src: "{{ teleport_service_template }}"
+      dest: "/etc/systemd/system/teleport.service"
+      owner: "root"
+      group: "root"
+      mode: "0644"
