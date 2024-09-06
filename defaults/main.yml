@@ -1,7 +1,7 @@
 ---
-teleport_version: "12.1.1"
+teleport_autodetect_version: false
+teleport_version: "{{ '15.4.11' if not teleport_autodetect_version }}"
 teleport_architecture: "amd64-bin"
-# teleport_architecture: "arm-bin"
 # apt is supported.
 teleport_install_method: "apt"
 # Only used when teleport_install_method is not 'tar'

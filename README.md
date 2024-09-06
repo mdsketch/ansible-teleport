@@ -30,9 +30,14 @@ A running teleport cluster so that you can provide the following information:
 These are the default variables with their default values as defined in `defaults/main.yml`
 
 ```
+teleport_autodetect_version: false
+```
+Whether or not try to autodetect the server version by querying its API.
+
+```
 teleport_version
 ```
-The version of teleport to install. See [teleport downloads](https://goteleport.com/teleport/download/) for available versions.
+The version of teleport to install. See [teleport downloads](https://goteleport.com/teleport/download/) for available versions. Keep it as an empty string if you want the role to autodetect the server version in cloud environments.
 
 ```
 teleport_architecture

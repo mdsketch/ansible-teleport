@@ -8,6 +8,11 @@
       (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
     )
 
+- name: "Lookup the cloud server version if none was provided"
+  ansible.builtin.include_tasks: detect_cloud_version.yml
+  when:
+    - teleport_autodetect_version
+    - not teleport_version | string
 
 - name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
