@@ -85,36 +85,27 @@
     mode: "0600"
     backup: "{{ backup_teleport_config }}"
   when: teleport_template_config
-  notify:
-    - Reload_Teleport
-
-- name: Ensure systemd directory exists
-  become: yes
-  ansible.builtin.file:
-    dest: "/etc/systemd/system"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-    state: directory
-
-- name: Create teleport service
-  become: yes
-  ansible.builtin.template:
-    src: "{{ teleport_service_template }}"
-    dest: "/etc/systemd/system/teleport.service"
-    owner: "root"
-    group: "root"
-    mode: "0644"
   notify: Reload_Teleport
-  when: teleport_control_systemd
 
-- name: Ensure teleport started and enabled on boot.
+- name: Configure teleport with systemd
   become: yes
-  ansible.builtin.systemd:
-    name: "teleport"
-    state: "started"
-    daemon_reload: yes
-    enabled: yes
-  when:
-    - teleport_control_systemd
-    - not is_container | bool
+  when: teleport_control_systemd
+  notify: Reload_Teleport
+  block:
+  - name: Ensure systemd directory exists
+    become: yes
+    ansible.builtin.file:
+      dest: "/etc/systemd/system"
+      owner: "root"
+      group: "root"
+      mode: "0755"
+      state: directory
+
+  - name: Create teleport service
+    become: yes
+    ansible.builtin.template:
+      src: "{{ teleport_service_template }}"
+      dest: "/etc/systemd/system/teleport.service"
+      owner: "root"
+      group: "root"
+      mode: "0644"
