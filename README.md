@@ -52,7 +52,7 @@ Change `teleport_architecture` any of the following:
 ```
 teleport_install_method: "tar"
 ```
-The method used for installation, currently supported:
+The method used for installation, currently supported by the role:
 - `tar` Download an archive.
 - `apt` Install gravitational keyring and the packages requested via apt.
 
@@ -103,7 +103,9 @@ Default `yes`. Controls if this role modifies the teleport config file.
 
 ## Upgrading Teleport
 
-When the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
+For "tar" installation method, when the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
+
+For "apt" installation method, the role will update the packages mentioned by "teleport_pkgs", as the repository provide them.
 
 When performing an upgrade, a backup of the current configuration file in `teleport_config_path` will be created and a new configuration file templated in its place. When doing this a `teleport_auth_token` and `teleport_ca_pin` do not need to be provided, as they are pulled from the existing configuration file, and then templated into the new configuration file.
 

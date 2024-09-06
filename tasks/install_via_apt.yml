@@ -1,7 +1,6 @@
 ---
 - name: "Install via apt"
   become: true
-  notify: Reload_Teleport
   block:
     - name: "Set the teleport_major_version and teleport_pkgs facts"
       ansible.builtin.set_fact:
@@ -33,3 +32,4 @@
         state: latest # noqa: package-latest
         force_apt_get: true
         update_cache: true
+      notify: Reload_Teleport

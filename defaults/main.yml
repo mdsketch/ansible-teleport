@@ -3,11 +3,10 @@ teleport_autodetect_version: false
 teleport_version: "{{ '15.4.11' if not teleport_autodetect_version }}"
 teleport_architecture: "amd64-bin"
 # apt is supported.
-teleport_install_method: "apt"
+teleport_install_method: "tar"
 # Only used when teleport_install_method is not 'tar'
 teleport_edition: "oss"
 # Only used when teleport_install_method is not 'tar'
-teleport_cloud: false
 teleport_auth_token: ""
 teleport_ca_pin: ""
 teleport_auth_server: ""

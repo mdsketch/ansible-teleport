@@ -19,35 +19,9 @@
     path: "{{ teleport_config_path }}"
   register:  teleport_config_file
 
-- name: Get auth_token # noqa risky-shell-pipe
-  become: yes
-  ansible.builtin.shell:
-    cmd: grep -i "auth_token:" {{ teleport_config_path }} | cut -d ':' -f 2 | tr -d ' "'
-  args:
-    removes: "{{ teleport_config_path }}"
-  register: "auth_token"
-  changed_when: false
+- name: "Save the precedent configuration or erase database artifacts"
+  ansible.builtin.include_tasks: auth_conf.yml
   when: teleport_config_file.stat.exists
-
-- name: Set teleport_auth_token # noqa no-handler
-  ansible.builtin.set_fact:
-    teleport_auth_token: "{{ auth_token.stdout }}"
-  when: auth_token.changed
-
-- name: Get ca_pin # noqa risky-shell-pipe
-  become: yes
-  ansible.builtin.shell:
-    cmd: grep -i "ca_pin" {{ teleport_config_path }} | cut -d ':' -f 2,3 | tr -d ' "'
-  args:
-    removes: "{{ teleport_config_path }}"
-  register: "ca_pin"
-  changed_when: false
-  when: teleport_config_file.stat.exists
-
-- name: Set teleport_ca_pin # noqa no-handler
-  ansible.builtin.set_fact:
-    teleport_ca_pin: "{{ ca_pin.stdout }}"
-  when: ca_pin.changed
 
 - name: "Dispatch on installation method"
   ansible.builtin.include_tasks: "{{ 'install_via_' + teleport_install_method + '.yml' }}"
