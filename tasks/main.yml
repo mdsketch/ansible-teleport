@@ -82,7 +82,7 @@
     dest: "{{ teleport_config_path }}"
     owner: "root"
     group: "root"
-    mode: 0600
+    mode: "0600"
     backup: "{{ backup_teleport_config }}"
   when: teleport_template_config
   notify:
@@ -94,7 +94,7 @@
     dest: "/etc/systemd/system"
     owner: "root"
     group: "root"
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Create teleport service
@@ -104,7 +104,7 @@
     dest: "/etc/systemd/system/teleport.service"
     owner: "root"
     group: "root"
-    mode: 0644
+    mode: "0644"
   notify: Reload_Teleport
   when: teleport_control_systemd
 

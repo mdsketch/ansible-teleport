@@ -4,6 +4,3 @@ pre-commit:
 	echo "yay pre-commit"
 	pre-commit install
 	pre-commit run --all-files
-
-lint:
-	ansible-lint -p deploy.yml
