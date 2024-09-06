@@ -72,6 +72,16 @@ The template to use for the teleport configuration file. The default is `templat
 There are many [options available](https://goteleport.com/docs/setup/reference/config/) and you can substitute in your own template and add any variables you want.
 
 ```
+teleport_ssh_labels
+```
+A list of list of key and values to template into the default teleport_config_template. Examples are shown as defaults above.
+
+```
+teleport_ssh_commands
+```
+A list of dictionaries to template into the default teleport_config_template. Examples are shown as defaults above.
+
+```
 teleport_ca_pin
 ```
 The CA pin to use for the teleport configuration. This is optional, but [recommended](https://goteleport.com/docs/setup/admin/adding-nodes/#untrusted-auth-servers).
@@ -132,6 +142,19 @@ For example to install teleport on a node:
     teleport_ssh_labels:
       - k: "label_key"
         v: "label_value"
+    teleport_ssh_commands:
+      - name: hostname
+        command: [hostname]
+        period: 60m0s
+      - name: uptime
+        command: [uptime, -p]
+        period: 5m0s
+      - name: version
+        command: [teleport, version]
+        period: 60m0s
+      - name: ip-address
+        command: ["/bin/sh","-c", "hostname -I | awk '{print $1}'"]
+        period: 60m0s
     teleport_auth_token: "super secret auth token"
     teleport_ca_pin: "not as secret ca pin"
     teleport_auth_server: "auth server"
@@ -159,15 +182,18 @@ ssh_service:
   labels:
     label_key: label_value
   commands:
-  - name: hostname
-    command: [hostname]
-    period: 60m0s
-  - name: uptime
-    command: [uptime, -p]
-    period: 5m0s
-  - name: version
-    command: [teleport, version]
-    period: 60m0s
+    - name: hostname
+      command: [hostname]
+      period: 60m0s
+    - name: uptime
+      command: [uptime, -p]
+      period: 5m0s
+    - name: version
+      command: [teleport, version]
+      period: 60m0s
+    - name: ip-address
+      command: ["/bin/sh","-c", "hostname -I | awk '{print $1}'"]
+      period: 60m0s
 proxy_service:
   enabled: "no"
   https_keypairs: []
