@@ -1,0 +1,22 @@
+---
+# Configuration file for ansible-lint
+
+# Ignore these paths during auto-detection
+exclude_paths:
+  - '.github'
+
+# Ref: https://github.com/ansible-community/ansible-lint/blob/main/.ansible-lint#L41-L49
+enable_list:
+  - 'fqcn-builtins'
+
+# List of rules currently ignored in DebOps repository
+skip_list:
+  # This check warns that a 'run_once' keyword will not work correctly on task
+  # level in playbooks with "free" strategy, but ansible-lint doesn't take the
+  # strategy of a given play into account, so the check is moot. A solution is
+  # to ignore the check on the task level.
+  # Ref: https://github.com/ansible/ansible-lint/issues/2815
+  #
+  # This tag is not correctly detected on the task level using "noqa" comment,
+  # so instead it's ignored globally for now.
+  - 'run-once[task]'
