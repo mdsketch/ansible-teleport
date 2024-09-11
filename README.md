@@ -42,7 +42,7 @@ Whether or not try to autodetect the server version by querying its API.
 ```
 teleport_version
 ```
-The version of teleport to install. See [teleport downloads](https://goteleport.com/teleport/download/) for available versions. Keep it as an empty string if you want the role to autodetect the server version in cloud environments.
+The version of teleport to install. See [teleport downloads](https://goteleport.com/teleport/download/) for available versions. Keep it as an empty string if you want the role to autodetect the server version.
 
 ```
 teleport_architecture
@@ -65,9 +65,9 @@ The method used for installation, currently supported by the role:
 teleport_edition: "oss"
 ```
 This is only used with teleport_install_method: "apt":
-- "oss" if you are using the community edition.
-- "enterprise" if you are using the self-hosted edition.
-- "cloud" if you are using the cloud edition.
+- `oss` if you are using the community edition.
+- `enterprise` if you are using the self-hosted edition.
+- `cloud` if you are using the cloud edition.
 
 ```
 teleport_config_template
@@ -118,9 +118,9 @@ Default `yes`. Controls if this role modifies the teleport config file.
 
 ## Upgrading Teleport
 
-For "tar" installation method, when the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
+For `tar` installation method, when the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
 
-For "apt" installation method, the role will update the packages mentioned by "teleport_pkgs", as the repository provide them.
+For `apt` installation method, the role will update the packages from the repository.
 
 When performing an upgrade, a backup of the current configuration file in `teleport_config_path` will be created and a new configuration file templated in its place. When doing this a `teleport_auth_token` and `teleport_ca_pin` do not need to be provided, as they are pulled from the existing configuration file, and then templated into the new configuration file.
 
