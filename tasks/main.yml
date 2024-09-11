@@ -8,72 +8,23 @@
       (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
     )
 
-- name: Check if teleport is installed.
+- name: "Lookup the cloud server version if none was provided"
+  ansible.builtin.include_tasks: detect_cloud_version.yml
+  when:
+    - teleport_autodetect_version
+    - not teleport_version | string
+
+- name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
-    path: /usr/local/bin/teleport
-  register: teleport_bin
+    path: "{{ teleport_config_path }}"
+  register:  teleport_config_file
 
-- name: Get installed teleport version
-  ansible.builtin.command:
-    cmd: teleport version
-  args:
-    removes: "{{ teleport_config_path }}"
-  register: "teleport_installed_version"
-  changed_when: false
-  when: teleport_bin.stat.exists
+- name: "Save the precedent configuration or erase database artifacts"
+  ansible.builtin.include_tasks: auth_conf.yml
+  when: teleport_config_file.stat.exists
 
-- name: Set teleport_update
-  ansible.builtin.set_fact:
-    update_teleport: "{{ teleport_version not in teleport_installed_version.stdout }}"
-  when: teleport_bin.stat.exists
-  changed_when: update_teleport
-  notify: Reload_Teleport
-
-- name: Get auth_token # noqa risky-shell-pipe
-  become: yes
-  ansible.builtin.shell: |
-    grep -i "auth_token:" {{ teleport_config_path }} | cut -d ':' -f 2 | tr -d ' "'
-  args:
-    removes: "{{ teleport_config_path }}"
-  register: "auth_token"
-  changed_when: false
-  when: teleport_bin.stat.exists
-
-- name: Set teleport_auth_token # noqa no-handler
-  ansible.builtin.set_fact:
-    teleport_auth_token: "{{ auth_token.stdout }}"
-  when: auth_token.changed
-
-- name: Get ca_pin # noqa risky-shell-pipe
-  become: yes
-  ansible.builtin.shell: |
-    grep -i "ca_pin" {{ teleport_config_path }} | cut -d ':' -f 2,3 | tr -d ' "'
-  args:
-    removes: "{{ teleport_config_path }}"
-  register: "ca_pin"
-  changed_when: false
-  when: teleport_bin.stat.exists
-
-- name: Set teleport_ca_pin # noqa no-handler
-  ansible.builtin.set_fact:
-    teleport_ca_pin: "{{ ca_pin.stdout }}"
-  when: ca_pin.changed
-
-- name: Unarchive teleport
-  ansible.builtin.unarchive:
-    src: "{{ teleport_url }}"
-    dest: "/tmp"
-    remote_src: yes
-  when: not teleport_bin.stat.exists or update_teleport
-
-- name: Install teleport
-  become: yes
-  ansible.builtin.command:  # noqa no-changed-when
-    cmd: ./install
-  args:
-    chdir: /tmp/teleport
-  notify: Reload_Teleport
-  when: not teleport_bin.stat.exists or update_teleport
+- name: "Dispatch on installation method"
+  ansible.builtin.include_tasks: "{{ 'install_via_' + teleport_install_method + '.yml' }}"
 
 - name: Create teleport config
   become: yes
@@ -85,36 +36,8 @@
     mode: "0600"
     backup: "{{ backup_teleport_config }}"
   when: teleport_template_config
-  notify:
-    - Reload_Teleport
-
-- name: Ensure systemd directory exists
-  become: yes
-  ansible.builtin.file:
-    dest: "/etc/systemd/system"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-    state: directory
-
-- name: Create teleport service
-  become: yes
-  ansible.builtin.template:
-    src: "{{ teleport_service_template }}"
-    dest: "/etc/systemd/system/teleport.service"
-    owner: "root"
-    group: "root"
-    mode: "0644"
   notify: Reload_Teleport
-  when: teleport_control_systemd
 
-- name: Ensure teleport started and enabled on boot.
-  become: yes
-  ansible.builtin.systemd:
-    name: "teleport"
-    state: "started"
-    daemon_reload: yes
-    enabled: yes
-  when:
-    - teleport_control_systemd
-    - not is_container | bool
+- name: "Configure systemd service"
+  ansible.builtin.include_tasks: "systemd.yml"
+  when: teleport_control_systemd

@@ -1,0 +1,14 @@
+---
+- name: "Lookup the server version"
+  ansible.builtin.uri:
+    url: >-
+      {{ "https://" +
+       ( teleport_proxy_server if teleport_proxy_server | string else teleport_auth_server )
+       + "/v1/webapi/automaticupgrades/channel/stable/cloud/version" }}
+    return_content: true
+    status_code: 200
+  register: teleport_server_lookup
+
+- name: "Set the server version as a fact"
+  ansible.builtin.set_fact:
+    teleport_version: "{{ teleport_server_lookup.content | regex_replace('^v', '') }}"
