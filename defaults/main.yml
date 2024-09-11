@@ -1,4 +1,5 @@
 ---
+teleport_nodename: ""
 teleport_autodetect_version: false
 teleport_version: "{{ '15.4.11' if not teleport_autodetect_version }}"
 teleport_architecture: "amd64-bin"

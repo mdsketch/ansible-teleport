@@ -1,6 +1,9 @@
 ---
 version: v3
 teleport:
+{% if teleport_nodename|string %}
+  nodename: {{ teleport_nodename }}
+{% endif %}
   auth_token: "{{ teleport_auth_token }}"
   ca_pin: "{{ teleport_ca_pin }}"
 {% if teleport_auth_server|string %}

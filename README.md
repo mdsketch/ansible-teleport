@@ -30,6 +30,11 @@ A running teleport cluster so that you can provide the following information:
 These are the default variables with their default values as defined in `defaults/main.yml`
 
 ```
+teleport_nodename: ""
+```
+The nodename to apply in the configuration.  Keep it as an empty string to let teleport use the hostname of the machine.
+
+```
 teleport_autodetect_version: false
 ```
 Whether or not try to autodetect the server version by querying its API.
@@ -158,7 +163,6 @@ For example to install teleport on a node:
     teleport_auth_token: "super secret auth token"
     teleport_ca_pin: "not as secret ca pin"
     teleport_auth_server: "auth server"
-    teleport_proxy_server: "proxy server"
 ```
 
 *Created Teleport Config to `/etc/teleport.yaml`*
@@ -170,7 +174,6 @@ teleport:
   auth_token: "super secret auth token"
   ca_pin: "not as secret ca pin"
   auth_server: auth server
-  proxy_server: proxy server
   log:
     output: stderr
     severity: INFO
