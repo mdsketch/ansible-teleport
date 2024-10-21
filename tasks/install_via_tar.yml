@@ -29,9 +29,7 @@
         src: "{{ teleport_url }}"
         dest: "/tmp"
         remote_src: yes
-      when:
-        - not teleport_bin.stat.exists
-        - update_teleport
+      when: not teleport_bin.stat.exists or update_teleport
 
     - name: Install teleport
       ansible.builtin.command:  # noqa no-changed-when
@@ -39,6 +37,4 @@
       args:
         chdir: /tmp/teleport
       notify: Reload_Teleport
-      when:
-        - not teleport_bin.stat.exists
-        - update_teleport
+      when: not teleport_bin.stat.exists or update_teleport
