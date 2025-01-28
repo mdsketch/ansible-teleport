@@ -1,0 +1,40 @@
+---
+# FIXME: pgp and integrity verification.
+- name: "Manage teleport via archive"
+  become: true
+  block:
+    - name: Check if teleport is installed.
+      ansible.builtin.stat:
+        path: /usr/local/bin/teleport
+      register: teleport_bin
+
+    - name: Get installed teleport version
+      ansible.builtin.command:
+        cmd: teleport version
+      args:
+        removes: "{{ teleport_config_path }}"
+      register: "teleport_installed_version"
+      changed_when: false
+      when: teleport_bin.stat.exists
+
+    - name: Set teleport_update
+      ansible.builtin.set_fact:
+        update_teleport: "{{ teleport_version not in teleport_installed_version.stdout }}"
+      when: teleport_bin.stat.exists
+      changed_when: update_teleport
+      notify: Reload_Teleport
+
+    - name: Unarchive teleport
+      ansible.builtin.unarchive:
+        src: "{{ teleport_url }}"
+        dest: "/tmp"
+        remote_src: yes
+      when: not teleport_bin.stat.exists or update_teleport
+
+    - name: Install teleport
+      ansible.builtin.command:  # noqa no-changed-when
+        cmd: ./install
+      args:
+        chdir: /tmp/teleport
+      notify: Reload_Teleport
+      when: not teleport_bin.stat.exists or update_teleport

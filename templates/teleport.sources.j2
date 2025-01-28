@@ -1,0 +1,5 @@
+Types: deb
+URIs: https://apt.releases.teleport.dev/{{ ansible_facts['lsb']['id'] | lower }}
+Suites: {{ ansible_facts['lsb']['codename'] }}
+Components: {{ "cloud" if teleport_edition == "cloud" else "stable" }}/{{ teleport_major_version }}
+Signed-By: /usr/share/keyrings/teleport-archive-keyring.asc

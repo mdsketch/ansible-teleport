@@ -1,0 +1,50 @@
+---
+- name: "Slurp the precedent configuration."
+  become: yes
+  ansible.builtin.slurp:
+    src: "{{ teleport_config_path }}"
+  register: old_conf_raw
+
+- name: "Set the precedent configuration as a fact."
+  ansible.builtin.set_fact:
+    old_conf: "{{ old_conf_raw['content'] | b64decode | from_yaml }}"
+
+- name: "Set fact teleport_auth_token from precedent configuration" # noqa no-handler
+  ansible.builtin.set_fact:
+    teleport_auth_token: "{{ old_conf.teleport.auth_token }}"
+  when:
+    - old_conf.teleport.auth_token is defined
+    - old_conf.teleport.auth_token | string
+    - not teleport_auth_token | string
+
+- name: "Set fact teleport_ca_pin from precedent configuration"
+  ansible.builtin.set_fact:
+    teleport_ca_pin: "{{ old_conf.teleport.ca_pin }}"
+  when:
+    - old_conf.teleport.ca_pin is defined
+    - old_conf.teleport.ca_pin | string
+    - not teleport_ca_pin | string
+
+- name: "Flush the teleport database when the token or ca_pin has changed."
+  when: >-
+    (
+      old_conf.teleport.auth_token is defined and old_conf.teleport.auth_token | string
+      and teleport_auth_token | string and teleport_auth_token != old_conf.teleport.auth_token
+    ) or (
+      old_conf.teleport.ca_pin and old_conf.teleport.ca_pin | string
+      and teleport_ca_pin | string and teleport_ca_pin != old_conf.teleport.ca_pin
+    )
+  notify: Reload_Teleport
+  become: yes
+  block:
+    - name: "Stop teleport service if enabled"
+      ansible.builtin.systemd:
+        name: "teleport"
+        state: "stopped"
+      when:
+        - not is_container
+
+    - name: "Delete teleport sqlite file"
+      ansible.builtin.file:
+        path: "/var/lib/teleport/proc/sqlite.db"
+        state: absent
